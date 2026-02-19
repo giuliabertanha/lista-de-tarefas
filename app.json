@@ -34,6 +34,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "257daea5-d488-4aca-a76e-6d5a8ed14d3c"
+      }
+    },
+    "owner": "giuliabertanha"
   }
 }
