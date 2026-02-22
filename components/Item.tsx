@@ -42,7 +42,7 @@ export default function Item({ data, onDelete, onToggle }: ItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: '#181818',
     padding: 15,
     borderRadius: 8,
     flexDirection: 'row', 
@@ -51,6 +51,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 20, 
     width: '68%',  
+    borderWidth: 1,
+    borderColor: '#333',
   },
   taskArea: {
     flexDirection: 'row',
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: '#333',
+    color: '#bcbcbc',
     marginLeft: 10,
     flex: 1,
   },

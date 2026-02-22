@@ -15,6 +15,11 @@ export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoIte
     setTextoInput('');  
   };
 
+  const cancelar = () => {
+    setTextoInput('');
+    aoCancelar();
+  };
+
   return (
     <Modal visible={visivel} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -25,13 +30,14 @@ export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoIte
             style={styles.input}
             value={textoInput}
             onChangeText={setTextoInput}
+            autoFocus={true}
           />
           
           <TouchableOpacity style={styles.botaoSalvar} onPress={finalizar}>
-            <Text style={{color: '#fff'}}>Adicionar </Text>
+            <Text style={{color: '#d7e3f4'}}>Adicionar </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={aoCancelar}>
+          <TouchableOpacity onPress={cancelar}>
             <Text style={{color: 'red', marginTop: 10, textAlign: 'center'}}>Cancelar</Text>
           </TouchableOpacity>
         </View>
@@ -57,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: 'center' 
   },
   modalConteudo: { 
-    marginTop: "60%",
+    marginTop: "50%",
     width: '85%', 
     backgroundColor: 'white', 
     padding: 20, 

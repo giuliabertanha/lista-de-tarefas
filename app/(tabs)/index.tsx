@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import React, {useState} from 'react';
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+import React, {useState, useEffect} from 'react';
+import { View } from '../../components/Themed';
 import Lista from '../../components/Lista';
 import Botoes from '../../components/Botoes';
 import NovoItemModal from '../../components/ModalNovoItem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Task {
   id: string;
@@ -15,9 +15,35 @@ interface Task {
 export default function TabOneScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const handleRemoveTask = (id: string) => {
     setTasks(prev => prev.filter(t => t.id !== id));
   };
+
+  useEffect(() => {
+    const carregarTarefas = async () => {
+      try {
+        const valor = await AsyncStorage.getItem('@minhas_tarefas');
+        if (valor !== null) {
+          setTasks(JSON.parse(valor));
+        }
+      } catch (e) {
+        console.error("Erro ao carregar tarefas", e);
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+
+    carregarTarefas();
+  }, []);
+
+  // Salva as mudanças automaticamente após o carregamento inicial
+  useEffect(() => {
+    if (isLoaded) {
+      salvarNoDispositivo(tasks);
+    }
+  }, [tasks, isLoaded]);
 
   const handleAddTask = (textoDaTarefa: string) => {
     const novaTarefa = {
@@ -31,7 +57,7 @@ export default function TabOneScreen() {
 
   const handleToggleTask = (id: string) => {
     setTasks(prev => prev.map(t => 
-      t.id === id ? { ...t, concluida: !t.concluida } : t
+      t.id === id ? { ...t, concluida: !t.concluida } : t // Se for o mesmo id, inverte o valor de 'concluida'
     ));
   };
 
@@ -56,11 +82,23 @@ export default function TabOneScreen() {
   );
 }
 
+const salvarNoDispositivo = async (tarefasAtualizadas: Task[]) => {
+  try {
+    const jsonValue = JSON.stringify(tarefasAtualizadas);
+    await AsyncStorage.setItem('@minhas_tarefas', jsonValue);
+    console.log("Dados salvos com sucesso!");
+  } catch (e) {
+    console.error("Erro ao salvar no AsyncStorage", e);
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#121212',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 20
   },
   title: {
     fontSize: 20,

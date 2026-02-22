@@ -21,19 +21,26 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarItemStyle: {
+          width: 'auto', 
+          paddingHorizontal: 10,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Lista de tarefas',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />
+          tabBarIcon: ({ color }) => <TabBarIcon name="check" color={color} />
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="progresso"
         options={{
-          title: 'Estatísticas',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Seu Progresso',
+          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />,
         }}
       />
     </Tabs>
