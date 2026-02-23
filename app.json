@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Lista de Tarefas",
-    "slug": "Lista de Tarefas",
+    "slug": "lista-de-tarefas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
