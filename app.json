@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "lista-de-tarefas",
-    "slug": "lista-de-tarefas",
+    "name": "Lista de Tarefas",
+    "slug": "Lista de Tarefas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -44,6 +44,12 @@
         "projectId": "257daea5-d488-4aca-a76e-6d5a8ed14d3c"
       }
     },
-    "owner": "giuliabertanha"
+    "owner": "giuliabertanha",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/257daea5-d488-4aca-a76e-6d5a8ed14d3c"
+    }
   }
 }
