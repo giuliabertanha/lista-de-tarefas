@@ -6,6 +6,7 @@ interface ItemProps {
   data: {
     id: string;
     texto: string;
+    prazo: string;
     concluida: boolean;
   };
   onDelete: (id: string) => void;
@@ -30,6 +31,12 @@ export default function Item({ data, onDelete, onToggle }: ItemProps) {
           data.concluida && styles.textConcluido
         ]}>
           {data.texto}
+        </Text>
+        <Text style={[
+          styles.text, 
+          data.concluida && styles.textConcluido
+        ]}>
+          {data.prazo}
         </Text>
       </TouchableOpacity>
 

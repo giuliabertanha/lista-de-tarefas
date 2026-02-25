@@ -5,6 +5,7 @@ import Item from "./Item";
 interface Task {
   id: string;
   texto: string;
+  prazo: string;
   concluida: boolean;
 }
 

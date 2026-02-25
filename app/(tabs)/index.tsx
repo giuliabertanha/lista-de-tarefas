@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface Task {
   id: string;
   texto: string;
+  prazo: string;
   concluida: boolean;
 }
 
@@ -45,10 +46,11 @@ export default function TabOneScreen() {
     }
   }, [tasks, isLoaded]);
 
-  const handleAddTask = (textoDaTarefa: string) => {
+  const handleAddTask = (textoDaTarefa: string, prazo: string) => {
     const novaTarefa = {
       id: Math.random().toString(),
       texto: textoDaTarefa,
+      prazo: prazo,
       concluida: false,
     };
     setTasks([...tasks, novaTarefa]);
@@ -95,7 +97,7 @@ const salvarNoDispositivo = async (tarefasAtualizadas: Task[]) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#0d0d0d',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20

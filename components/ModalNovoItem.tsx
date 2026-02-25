@@ -1,18 +1,37 @@
 import React, { useState } from 'react';
-import { Modal, Text, TouchableOpacity,View, TextInput, StyleSheet } from 'react-native';
+import { Modal, Text, TouchableOpacity,View, TextInput, StyleSheet, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface NovoItemModalProps {
   visivel: boolean;
-  aoSalvar: (texto: string) => void;
+  aoSalvar: (texto: string, prazo: string) => void;
   aoCancelar: () => void;
 }
 
 export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoItemModalProps) {
   const [textoInput, setTextoInput] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+
+  const showDatepicker = () => {
+    setShowPicker(true);
+  };
+
+  const onChange = (event: any, dataSelecionada?: Date) => {
+    const prazo = dataSelecionada || date;
+    setShowPicker(Platform.OS === 'ios'); 
+    setDate(prazo);
+  };
+
+  const prazo = date.toLocaleDateString(); 
 
   const finalizar = () => {
-    aoSalvar(textoInput);
+    if (textoInput.trim() === '') {
+      return;
+    }
+    aoSalvar(textoInput, prazo);
     setTextoInput('');  
+    setDate(new Date());
   };
 
   const cancelar = () => {
@@ -27,14 +46,37 @@ export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoIte
           <Text style={styles.title}>Nova tarefa</Text>
           
           <TextInput 
+            placeholder="Descrição"
+            placeholderTextColor="#999"
             style={styles.input}
             value={textoInput}
             onChangeText={setTextoInput}
             autoFocus={true}
           />
+
+          <TouchableOpacity onPress={showDatepicker}>
+            <TextInput
+              placeholder="Prazo"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={prazo}
+              editable={false}
+            />
+          </TouchableOpacity>
+
+          {showPicker && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode="date"
+              is24Hour={true}
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'} 
+              onChange={onChange}
+            />
+          )}
           
           <TouchableOpacity style={styles.botaoSalvar} onPress={finalizar}>
-            <Text style={{color: '#d7e3f4'}}>Adicionar </Text>
+            <Text style={{color: '#e6e9ef'}}>Adicionar </Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={cancelar}>
@@ -76,11 +118,12 @@ const styles = StyleSheet.create({
   },
   input: { 
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#cdcdcd',
     borderRadius: 5,
     padding: 12, 
     marginBottom: 20,
-    fontSize: 16
+    fontSize: 16,
+    color: '#000',
   },
   botaoSalvar: { 
     backgroundColor: '#4384e4', 

@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#121212',
         width: "100%",
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingBottom: 30
     },
     botao: {
         justifyContent: 'center',
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
         width: "88%"
     },
     texto: {
-        color: '#bacbe5',
+        color: '#e6e9ef',
         fontSize: 16,
         fontWeight: 'bold',
     }
