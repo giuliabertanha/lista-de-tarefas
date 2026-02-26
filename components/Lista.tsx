@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FlatList, StyleSheet, View, Text } from 'react-native';
 import Item from "./Item";
 
@@ -16,9 +16,19 @@ interface ListaProps {
 }
 
 export default function Lista({ tarefas, onDelete, onToggle }: ListaProps) {
+ const listaOrdenada = useMemo(() => { //useMemo garante que a função só seja executada novamente se uma das dependências for alterada.
+  return [...tarefas].sort((a, b) => {
+    const converter = (dataStr: string) => {
+      const [dia, mes, ano] = dataStr.split('/');
+      return new Date(`${ano}-${mes}-${dia}`).getTime();
+    };
+    return converter(a.prazo) - converter(b.prazo);
+  });
+}, [tarefas]);
+  //console.log(listaOrdenada);
   return (
     <FlatList
-      data={tarefas}
+      data={listaOrdenada}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <Item 

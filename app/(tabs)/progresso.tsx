@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native'; 
@@ -6,6 +6,7 @@ import { useIsFocused } from '@react-navigation/native';
 interface Task {
   id: string;
   texto: string;
+  prazo: string;
   concluida: boolean;
 }
 
@@ -30,10 +31,41 @@ export default function SeuProgresso() {
     }
   };
 
-  const total = tasks.length;
-  const concluidas = tasks.filter(t => t.concluida).length;
-  const pendentes = total - concluidas;
-  const porcentagem = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+  const { porcentagem, concluidas, pendentes, atrasadas, paraHoje } = useMemo(() => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const hojeTimestamp = hoje.getTime();
+
+    const total = tasks.length;
+    if (total === 0) {
+      return { porcentagem: 0, concluidas: 0, pendentes: 0, atrasadas: 0, paraHoje: 0 };
+    }
+
+    const concluidasCount = tasks.filter(t => t.concluida).length;
+
+    const stats = tasks.reduce((acc, task) => {
+      if (!task.concluida) {
+        const [dia, mes, ano] = task.prazo.split('/');
+        const prazo = new Date(Number(ano), Number(mes) - 1, Number(dia));
+        const prazoTimestamp = prazo.getTime();
+
+        if (prazoTimestamp < hojeTimestamp) {
+          acc.atrasadas++;
+        } else if (prazoTimestamp === hojeTimestamp) {
+          acc.paraHoje++;
+        }
+      }
+      return acc;
+    }, { atrasadas: 0, paraHoje: 0 });
+
+    return {
+      porcentagem: Math.round((concluidasCount / total) * 100),
+      concluidas: concluidasCount,
+      pendentes: total - concluidasCount,
+      atrasadas: stats.atrasadas,
+      paraHoje: stats.paraHoje,
+    };
+  }, [tasks]);
 
   return (
     <View style={styles.container}>
@@ -44,16 +76,29 @@ export default function SeuProgresso() {
       </View>
 
       <View style={styles.row}>
-        <View style={[styles.cardPequeno, { backgroundColor: '#4CAF50' }]}>
+        <View style={[styles.cardPequeno, { backgroundColor: '#2a962d' }]}>
           <Text style={styles.numeroPequeno}>{concluidas}</Text>
           <Text style={styles.labelPequena}>Concluídas </Text>
         </View>
 
-        <View style={[styles.cardPequeno, { backgroundColor: '#FF5252' }]}>
+        <View style={[styles.cardPequeno, { backgroundColor: '#aa1414' }]}>
           <Text style={styles.numeroPequeno}>{pendentes}</Text>
           <Text style={styles.labelPequena}>Pendentes </Text>
         </View>
       </View>
+
+      <View style={[styles.card, { flexDirection: 'row', justifyContent: 'center', alignItems: 'baseline' }]}>
+          <Text style={[
+            styles.numeroPequeno,
+            atrasadas > 0 && styles.atrasadas
+          ]}>{atrasadas}</Text>
+          <Text style={[styles.label, { marginLeft: 15, color: '#bdbdbd'}]}>Atrasadas </Text>
+        </View>
+
+        <View style={[styles.card, { flexDirection: 'row', justifyContent: 'center', alignItems: 'baseline' }]}>
+          <Text style={styles.numeroPequeno}>{paraHoje}</Text>
+          <Text style={[styles.label, { marginLeft: 15, color: '#bdbdbd'}]}>Para hoje </Text>
+        </View>
     </View>
   );
 }
@@ -94,14 +139,18 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     alignItems: 'center',
+    marginBottom: 20,
   },
   numeroPequeno: {
     fontSize: 24,
-    color: '#fff',
+    color: '#bdbdbd',
     fontWeight: 'bold',
   },
   labelPequena: {
-    color: '#fff',
+    color: '#bdbdbd',
     opacity: 0.8,
   },
+  atrasadas: {
+    color: '#d12c2c'
+  }
 });

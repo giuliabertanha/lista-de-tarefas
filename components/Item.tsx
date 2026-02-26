@@ -14,6 +14,15 @@ interface ItemProps {
 }
 
 export default function Item({ data, onDelete, onToggle }: ItemProps) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const [dia, mes, ano] = data.prazo.split('/');
+  const prazo = new Date(`${ano}-${mes}-${dia}T12:00:00`);
+  prazo.setHours(0, 0, 0, 0);
+
+  //console.log(`Texto: ${data.texto} | Prazo: ${prazo} | Prazo: ${hoje}`);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity 
@@ -34,7 +43,9 @@ export default function Item({ data, onDelete, onToggle }: ItemProps) {
         </Text>
         <Text style={[
           styles.text, 
-          data.concluida && styles.textConcluido
+          data.concluida && styles.textConcluido,
+          {marginRight: -40},
+          prazo < hoje && !data.concluida && styles.atrasado
         ]}>
           {data.prazo}
         </Text>
@@ -44,6 +55,7 @@ export default function Item({ data, onDelete, onToggle }: ItemProps) {
         <Ionicons name="trash-outline" size={24} color="#FF5252" />
       </TouchableOpacity>
     </View>
+    
   );
 }
 
@@ -76,5 +88,8 @@ const styles = StyleSheet.create({
   textConcluido: {
     textDecorationLine: 'line-through',
     color: '#A0A0A0',
+  },
+  atrasado: {
+    color: '#FF5252',
   }
 });
