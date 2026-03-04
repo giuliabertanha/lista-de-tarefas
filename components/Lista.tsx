@@ -13,9 +13,10 @@ interface ListaProps {
   tarefas: Task[];
   onDelete: (id: string) => void;
   onToggle: (id: string) => void;
+  onEdit:   (id: string) => void;
 }
 
-export default function Lista({ tarefas, onDelete, onToggle }: ListaProps) {
+export default function Lista({ tarefas, onDelete, onToggle,onEdit }: ListaProps) {
  const listaOrdenada = useMemo(() => { //useMemo garante que a função só seja executada novamente se uma das dependências for alterada.
   return [...tarefas].sort((a, b) => {
     const converter = (dataStr: string) => {
@@ -25,7 +26,6 @@ export default function Lista({ tarefas, onDelete, onToggle }: ListaProps) {
     return converter(a.prazo) - converter(b.prazo);
   });
 }, [tarefas]);
-  //console.log(listaOrdenada);
   return (
     <FlatList
       data={listaOrdenada}
@@ -35,6 +35,7 @@ export default function Lista({ tarefas, onDelete, onToggle }: ListaProps) {
           data={item} 
           onDelete={onDelete} 
           onToggle={onToggle} 
+          onEdit={onEdit}
         />
       )}
       ListEmptyComponent={() => (

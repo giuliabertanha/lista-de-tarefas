@@ -4,6 +4,7 @@ import { View } from '../../components/Themed';
 import Lista from '../../components/Lista';
 import Botoes from '../../components/Botoes';
 import NovoItemModal from '../../components/ModalNovoItem';
+import ModalExclusao from '../../components/ModalExclusao';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Task {
@@ -17,9 +18,21 @@ export default function TabOneScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
-  const handleRemoveTask = (id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+  const handleOpenDeleteModal = (id: string) => {
+    setTaskToDelete(id);
+    setDeleteModalVisible(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (taskToDelete) {
+      setTasks(prev => prev.filter(t => t.id !== taskToDelete));
+      setTaskToDelete(null);
+      setDeleteModalVisible(false);
+    }
   };
 
   useEffect(() => {
@@ -46,14 +59,29 @@ export default function TabOneScreen() {
     }
   }, [tasks, isLoaded]);
 
-  const handleAddTask = (textoDaTarefa: string, prazo: string) => {
-    const novaTarefa = {
-      id: Math.random().toString(),
-      texto: textoDaTarefa,
-      prazo: prazo,
-      concluida: false,
-    };
-    setTasks([...tasks, novaTarefa]);
+  const handleEditTask = (id: string) => {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      setEditingTask(task);
+      setModalVisible(true);
+    } 
+  };
+
+  const handleSaveTask  = (textoDaTarefa: string, prazo: string) => {
+    if (editingTask) {
+      setTasks(prev => prev.map(t => 
+        t.id === editingTask.id ? { ...t, texto: textoDaTarefa, prazo } : t
+      ));
+      setEditingTask(null);
+    } else {
+      const novaTarefa = {
+        id: Math.random().toString(),
+        texto: textoDaTarefa,
+        prazo: prazo,
+        concluida: false,
+      };
+      setTasks([...tasks, novaTarefa]);
+    }
     setModalVisible(false); 
   };
 
@@ -67,18 +95,35 @@ export default function TabOneScreen() {
     <View style={styles.container}>
       <Lista 
         tarefas={tasks} 
-        onDelete={handleRemoveTask} 
+        onDelete={handleOpenDeleteModal} 
         onToggle={handleToggleTask} 
+        onEdit={handleEditTask}
       />
 
       <View style={{ width: '100%', alignItems: 'center', marginVertical: 20 }}>
-        <Botoes onPress={() => setModalVisible(true)} />
+        <Botoes onPress={() => {
+          setEditingTask(null); 
+          setModalVisible(true);
+        }} />
       </View>
 
       <NovoItemModal 
         visivel={modalVisible} 
-        aoSalvar={handleAddTask} 
-        aoCancelar={() => setModalVisible(false)} 
+        tarefaEditar={editingTask}
+        aoSalvar={handleSaveTask} 
+        aoCancelar={() => {
+          setEditingTask(null); 
+          setModalVisible(false);
+        }} 
+      />
+
+      <ModalExclusao
+        visivel={deleteModalVisible}
+        onDelete={handleConfirmDelete}
+        onCancel={() => {
+          setTaskToDelete(null);
+          setDeleteModalVisible(false);
+        }}
       />
     </View>
   );

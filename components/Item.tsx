@@ -11,9 +11,10 @@ interface ItemProps {
   };
   onDelete: (id: string) => void;
   onToggle: (id: string) => void;
+  onEdit: (id: string) => void;
 }
 
-export default function Item({ data, onDelete, onToggle }: ItemProps) {
+export default function Item({ data, onDelete, onToggle, onEdit }: ItemProps) {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
@@ -21,37 +22,43 @@ export default function Item({ data, onDelete, onToggle }: ItemProps) {
   const prazo = new Date(`${ano}-${mes}-${dia}T12:00:00`);
   prazo.setHours(0, 0, 0, 0);
 
-  //console.log(`Texto: ${data.texto} | Prazo: ${prazo} | Prazo: ${hoje}`);
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.taskArea} 
-        onPress={() => onToggle(data.id)}
-        activeOpacity={0.7}
-      >
-        <Ionicons 
-          name={data.concluida ? "checkbox" : "square-outline"} 
-          size={24} 
-          color={data.concluida ? "#4CAF50" : "#666"} 
-        />
-        <Text style={[
-          styles.text, 
-          data.concluida && styles.textConcluido
-        ]}>
-          {data.texto}
-        </Text>
-        <Text style={[
-          styles.text, 
-          data.concluida && styles.textConcluido,
-          {marginRight: -40},
-          prazo < hoje && !data.concluida && styles.atrasado
-        ]}>
-          {data.prazo}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.taskArea}>
+        <TouchableOpacity  
+          onPress={() => onToggle(data.id)}
+          activeOpacity={0.7}
+        >
+          <Ionicons 
+            name={data.concluida ? "checkbox" : "square-outline"} 
+            size={24} 
+            color={data.concluida ? "#4CAF50" : "#666"} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.taskArea} 
+          onPress={() => onEdit(data.id)}
+          >  
+          <Text style={[
+            styles.text, 
+            data.concluida && styles.textConcluido
+          ]}>
+            {data.texto}
+          </Text>
+          <Text style={[
+            styles.text, 
+            data.concluida && styles.textConcluido,
+            {marginRight: -40},
+            prazo < hoje && !data.concluida && styles.atrasado
+          ]}>
+            {data.prazo}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity onPress={() => onDelete(data.id)}>
+      <TouchableOpacity onPress={() => {
+        onDelete(data.id)
+      }}>
         <Ionicons name="trash-outline" size={24} color="#FF5252" />
       </TouchableOpacity>
     </View>

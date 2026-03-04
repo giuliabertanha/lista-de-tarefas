@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Text, TouchableOpacity,View, TextInput, StyleSheet, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface NovoItemModalProps {
   visivel: boolean;
+  tarefaEditar?: {
+    id: string;
+    texto: string;
+    prazo: string;
+    concluida: boolean;
+  } | null;
   aoSalvar: (texto: string, prazo: string) => void;
   aoCancelar: () => void;
 }
 
-export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoItemModalProps) {
+export default function NovoItemModal({ visivel, tarefaEditar, aoSalvar, aoCancelar}: NovoItemModalProps) {
   const [textoInput, setTextoInput] = useState('');
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+
+  useEffect(() => {
+    if (tarefaEditar) {
+      setTextoInput(tarefaEditar.texto);
+        const [dia, mes, ano] = tarefaEditar.prazo.split('/');
+        setDate(new Date(Number(ano), Number(mes) - 1, Number(dia)));
+    } else {
+      setTextoInput('');
+      setDate(new Date());
+    }
+  }, [visivel,tarefaEditar])
 
   const showDatepicker = () => {
     setShowPicker(true);
@@ -43,7 +60,7 @@ export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoIte
     <Modal visible={visivel} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalConteudo}>
-          <Text style={styles.title}>Nova tarefa</Text>
+          <Text style={styles.title}>{tarefaEditar ? 'Editar tarefa' : 'Nova tarefa'}</Text>
           
           <TextInput 
             placeholder="Descrição"
@@ -76,7 +93,7 @@ export default function NovoItemModal({ visivel, aoSalvar, aoCancelar }: NovoIte
           )}
           
           <TouchableOpacity style={styles.botaoSalvar} onPress={finalizar}>
-            <Text style={{color: '#e6e9ef'}}>Adicionar </Text>
+            <Text style={{color: '#e6e9ef'}}>{tarefaEditar ? 'Salvar ' : 'Adicionar '}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={cancelar}>
