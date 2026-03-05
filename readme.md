@@ -1,8 +1,7 @@
-# **Aplicativo de lista de tarefas desenvolvido com React**
-Permite a inclusão e exclusão de tarefas, que podem ser marcadas como concluídas. Também exibe o número de tarefas realizadas e pendentes, com a porcentagem de itens concluídos.
-
+# **Aplicativo de lista de tarefas**
+Aplicativo desenvolvido com React Native, que permite a inclusão, alteração, consulta e exclusão de tarefas (armazenamento local com AsyncStorage). Também exibe o número de tarefas realizadas, pendentes atrasadas e com data para hoje, além de exibir a porcentagem de itens concluídos.
 <div style="display: flex; justify-content: center; gap: 10px; text-align: center;">
-  <img src="img1.jpg" style="width: 30%;">
-  <img src="img2.jpg" style="width: 30%;">
-  <img src="img3.jpg" style="width: 30%;">
+  <img src="img1.jpg" style="width: 33%;">
+  <img src="img2.jpg" style="width: 33%;">
+  <img src="img3.jpg" style="width: 33%;">
 </div>
